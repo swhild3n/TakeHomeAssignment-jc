@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using Newtonsoft.Json;
 
 namespace TakeHomeAssignment_jc
@@ -10,7 +8,7 @@ namespace TakeHomeAssignment_jc
     class ActionAdder
     {
         #region Properties
-        private readonly object actionLock = new object();
+        static ReaderWriterLockSlim actionLock = new ReaderWriterLockSlim();
 
         private readonly string errorEmptyAction = "Action is not allowed to be empty";
 
@@ -39,9 +37,16 @@ namespace TakeHomeAssignment_jc
 
             //Prevents concurrent calls from accessing
             //the Actions list at the same time
-            lock (actionLock)
+            actionLock.EnterWriteLock();
             {
-                Actions.Add(action);
+                try 
+                {
+                    Actions.Add(action);
+                }
+                finally
+                {
+                    actionLock.ExitWriteLock();
+                }
             }
 
             return success;
@@ -58,18 +63,25 @@ namespace TakeHomeAssignment_jc
             if (Actions == null || Actions.FirstOrDefault() == null)
                 return outputString;
 
-            //Prevents concurrent calls from accessing
-            //the Actions list at the same time
-            lock (actionLock)
+            //Makes concurrent reads from the Actions list safe
+            actionLock.EnterReadLock();
             {
-                var stats = Actions.GroupBy(x => x.Action)
+                try
+                {
+                    var stats = Actions.GroupBy(x => x.Action)
                     .OrderBy(x => x.Key)
                     .Select(x => new StatsModel()
                     {
                         Action = x.Key,
                         Avg = x.Average(y => y.Time)
                     });
-                outputString = JsonConvert.SerializeObject(stats);
+                    outputString = JsonConvert.SerializeObject(stats);
+                }
+                finally
+                {
+                    actionLock.ExitReadLock();
+                }
+                
             }
             return outputString;
         }

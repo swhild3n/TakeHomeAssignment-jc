@@ -1,26 +1,16 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace TakeHomeAssignment_jc
 {
     class Program
     {
-        static void Main(string[] args)
+        async static Task Main(string[] args)
         {
-            var actionAdder = new ActionAdder();
-            var error = "";
+            var tests = new Tests();
+            await tests.RunTests();
 
-            foreach(var arg in args)
-            {
-                error = actionAdder.addAction(arg);
-                if(error != "")
-                {
-                    Console.WriteLine(error);
-                }
-            }
-            var stats = actionAdder.getStats();
-
-            Console.WriteLine("Statistics: \n" + stats);
-
+            Console.WriteLine("Tests completed!");
         }
     }
 }
