@@ -1,5 +1,5 @@
 # TakeHomeAssignment-jc
-Interview Assignment for JumpCloud
+Interview Assignment for JumpCloud  
 Contains a small library function to add actions as well as get stats on added actions.
 
 # Requirements
