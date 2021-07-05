@@ -119,11 +119,9 @@ namespace TakeHomeAssignment_jc
                 await Task.WhenAll(
                     Task.Run(() => x.addAction("{\"action\":\"jump\",\"time\":100}")),
                     Task.Run(() => x.addAction("{\"action\":\"run\",\"time\":200}")),
-                    Task.Run(() => x.getStats()),
                     Task.Run(() => x.addAction("{\"action\":\"jump\",\"time\":300}")),
                     Task.Run(() => x.addAction("{\"action\":\"run\",\"time\":100}")),
                     Task.Run(() => x.addAction("{\"action\":\"run\",\"time\":200}")),
-                    Task.Run(() => x.getStats()),
                     Task.Run(() => x.addAction("{\"action\":\"jump\",\"time\":300}")),
                     Task.Run(() => x.addAction("{\"action\":\"jump\",\"time\":100}")),
                     Task.Run(() => x.addAction("{\"action\":\"jump\",\"time\":100}"))
@@ -135,6 +133,7 @@ namespace TakeHomeAssignment_jc
 
             });
 
+            //Test the ability of the code to handle concurrent reads and writes to the Actions List
             await tester.DoTestAsync("Concurrent Calls With Get Stats", async x => {
             
                 await Task.WhenAll(
